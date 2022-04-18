@@ -1,7 +1,4 @@
-﻿using System;
-
-namespace ShadowFNT.Structures {
-
+﻿namespace ShadowFNT.Structures {
     public struct TableEntry {
         public int subtitleAddress;
         public int messageIdBranchSequence;
