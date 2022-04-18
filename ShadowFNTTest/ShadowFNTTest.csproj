@@ -25,7 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\corrupted_stg0501_EN_initial_state.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\corrupted_stg0501_EN_resave.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\stg0100_EN.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\stg0501_EN_original_to_beetle_but_in_1.4.5.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
