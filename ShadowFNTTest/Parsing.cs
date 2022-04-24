@@ -17,10 +17,19 @@ namespace ShadowFNTTest
             Assert.Equal(fileName, fnt.fileName);
             Assert.Equal(filterString, fnt.filterString);
             Assert.Equal(471, fnt.entryTable.Count);
+
+
+            int expectedDataIndex = 120;
+            Assert.Equal(23478, fnt.GetEntrySubtitleAddress(expectedDataIndex));
+            Assert.Equal(64100, fnt.GetEntryMessageIdBranchSequence(expectedDataIndex));
+            Assert.Equal(EntryType.TRIGGER_OBJECT, fnt.GetEntryEntryType(expectedDataIndex));
+            Assert.Equal(172, fnt.GetEntryActiveTime(expectedDataIndex));
+            Assert.Equal(1564, fnt.GetEntryAudioID(expectedDataIndex));
+            Assert.Equal("This cage is protected by\nthose GUN soldiers.\0", fnt.GetEntrySubtitle(expectedDataIndex));
         }
 
         [Fact]
-        public void ReadFNT_WithCorruptedSubtitleAddresses()
+        public void ReadFNT_WithCorruptedSubtitleAddresses_And_Correct_Them()
         {
             // On detect FNT modified by ShadowTH Text Editor < 1.4.2
             

@@ -123,7 +123,14 @@ namespace ShadowFNT.Structures {
         }
 
         public override bool Equals(object obj) {
-            FNT compareFnt = (FNT)obj;
+            FNT compareFnt;
+            try {
+                compareFnt = (FNT)obj;
+            } catch (InvalidCastException) {
+                // on DarkMode/LightMode change eq will be called on MS.Internal.NamedObject, handle gracefully
+                return false;
+            }
+            
             for (int i = 0; i < entryTable.Count; i++) {
                 if (entryTable[i].subtitle != compareFnt.entryTable[i].subtitle)
                     return false;
@@ -335,33 +342,18 @@ namespace ShadowFNT.Structures {
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="forceAll"></param>
-        /// <returns></returns>
-        /// 
-
-        /// <summary>
         /// Recomputes subtitleAddress for all entries in the entryTable.
-        /// Assumes entry 0 is source of truth / non-corrupted, will warn if entry 0 does not match the manual address calculation for entry 0
         /// </summary>
-        /// <param name="forceAll">Defaults to false, set to true if you want to force entry 0's address to be the computed value rather than the parsed value.</param>
-        /// <returns>-1 implies entry 0's address does not match the computed address. The entryTable is unchanged.
-        /// 0 means the operation was successful and all entries have been modified.
-        /// </returns>
         /// 
-        public int RecomputeAllSubtitleAddresses(bool forceAll = false)
+        public void RecomputeAllSubtitleAddresses()
         {
-            // TODO: Throw a warning if entry 0 does not match expected
-
             // Calculate entry size + header to determine entry 0 without assuming source of truth
             int addressStart = 0;
             addressStart += 4; // add 4 for entryCount (4 bytes)
             addressStart += ENTRY_SIZE * entryTable.Count; // add a slot for every entry
+            
             if (addressStart != entryTable[0].subtitleAddress)
             {
-                if (!forceAll)
-                    return -1; //TODO: Maybe throw an exception instead?
                 TableEntry entry0 = entryTable[0];
                 entry0.subtitleAddress = addressStart;
                 entryTable[0] = entry0;
@@ -374,8 +366,6 @@ namespace ShadowFNT.Structures {
                 entry.subtitleAddress = predecessor.subtitleAddress + (predecessor.subtitle.Length * 2);
                 entryTable[i] = entry;
             }
-
-            return 0;
         }
     }
 }
