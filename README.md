@@ -2,39 +2,38 @@
 C# library that can read/write FNT files from Shadow The Hedgehog
 
 ## Usage
+Reads the data from a FNT file, converting it into a format easier to edit for the end user.
 
-### Previewing an AFS File
-You can preview an AFS file by creating an instance of `AfsFileViewer`.
 
+### Reading and Writing FNT Files
 ```csharp
-using ShadowFNT.Structures;
+using ShadowFNT
 
-var data = File.ReadAllBytes(afsFilePath);
-if (AfsFileViewer.TryFromFile(data, out var afsViewer)) 
-{
-	// Do stuff.
-};
-
-string[] foundFnts = Directory.GetFiles(lastOpenDir, "*_" + localeSwitcher.Substring(localeSwitcher.Length - 2) + ".fnt", SearchOption.AllDirectories);
-for (int i = 0; i < foundFnts.Length; i++) {
-    byte[] readFile = File.ReadAllBytes(foundFnts[i]);
-    FNT newFnt = FNT.ParseFNTFile(foundFnts[i], ref readFile, lastOpenDir);
+byte[] readFile = File.ReadAllBytes(fntFilePath);
+FNT fnt = FNT.ParseFNTFile(fntFilePath, ref readFile);
 ```
 
-### Editing an AFS File
-To edit an AFS file, create an instance of `AfsArchive`.
-`AfsArchive` reads all of the data from an `AfsFileViewer`, converting it into a format easier to edit for the end user.
+To convert the file back to bytes, use the `BuildFNTFile` method.
 
 ```csharp
-var data = File.ReadAllBytes(afsFilePath);
-if (AfsArchive.TryFromFile(data, out var afsArchive)) 
-{
-	// Do stuff.
-};
+byte[] bytesForWriting = fnt.BuildFNTFile();
 ```
 
-To convert the file back to bytes, use the `ToBytes` method.
+### Methods for Manipulating FNT Content
 
 ```csharp
-afsArchive.ToBytes();
+GetEntrySubtitleAddress
+GetEntryMessageIdBranchSequence
+SetEntryMessageIdBranchSequence
+GetEntryEntryType
+SetEntryEntryType
+GetEntryActiveTime
+SetEntryActiveTime
+GetEntryAudioID
+SetEntryAudioID
+GetEntrySubtitle
+SetEntrySubtitle
+InsertNewEntry
+DeleteEntry
+RecomputeAllSubtitleAddresses
 ```

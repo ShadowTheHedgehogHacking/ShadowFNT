@@ -78,7 +78,7 @@ namespace ShadowFNT {
                     subtitleLength = fnt.entryTable[i + 1].subtitleAddress - fnt.entryTable[i].subtitleAddress;
                     subtitle = Encoding.Unicode.GetString(file, positionIndex, subtitleLength);
                 }
-                fnt.UpdateEntrySubtitle(i, subtitle);
+                fnt.SetEntrySubtitle(i, subtitle);
                 positionIndex += subtitleLength;
             }
 
@@ -86,9 +86,9 @@ namespace ShadowFNT {
         }
 
         /// <summary>
-        /// Returns a .fnt built from the FNT
+        /// Returns a byte[] of the FNT
         /// </summary>
-        public List<byte> BuildFNTFile() {
+        public byte[] BuildFNTFile() {
             List<byte> fntFile = new List<byte>();
 
             // write header
@@ -113,7 +113,7 @@ namespace ShadowFNT {
             fntFile.Add(0x00);
             fntFile.Add(0x00);
 
-            return fntFile;
+            return fntFile.ToArray();
         }
 
         public override string ToString() {
@@ -177,7 +177,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="tableEntryIndex">Index of entry to update</param>
         /// <param name="messageIdBranchSequence">Updated messageIdBranchSequence value</param>
-        public void UpdateEntryMessageIdBranchSequence(int tableEntryIndex, int messageIdBranchSequence) {
+        public void SetEntryMessageIdBranchSequence(int tableEntryIndex, int messageIdBranchSequence) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             updatedEntry.messageIdBranchSequence = messageIdBranchSequence;
             entryTable[tableEntryIndex] = updatedEntry;
@@ -197,7 +197,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="tableEntryIndex">Index of entry to update</param>
         /// <param name="enumIndex">Updated EntryType value</param>
-        public void UpdateEntryEntryType(int tableEntryIndex, int enumIndex) {
+        public void SetEntryEntryType(int tableEntryIndex, int enumIndex) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             EntryType temp = EntryType.BACKGROUND_VOICE; //stub entry to get enum values
             updatedEntry.entryType = (EntryType)Enum.GetValues(temp.GetType()).GetValue(enumIndex);
@@ -218,7 +218,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="tableEntryIndex">Index of entry to update</param>
         /// <param name="activeTime">Updated activeTime value</param>
-        public void UpdateEntryActiveTime(int tableEntryIndex, int activeTime) {
+        public void SetEntryActiveTime(int tableEntryIndex, int activeTime) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             updatedEntry.subtitleActiveTime = activeTime;
             entryTable[tableEntryIndex] = updatedEntry;
@@ -238,7 +238,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="tableEntryIndex">Index of entry to update</param>
         /// <param name="audioId">AudioID to play (index in the AFS)</param>
-        public void UpdateEntryAudioID(int tableEntryIndex, int audioId) {
+        public void SetEntryAudioID(int tableEntryIndex, int audioId) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             updatedEntry.audioId = audioId;
             entryTable[tableEntryIndex] = updatedEntry;
@@ -259,7 +259,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="tableEntryIndex">Index of entry to update</param>
         /// <param name="updatedText">string of new text to display</param>
-        public void UpdateEntrySubtitle(int tableEntryIndex, string updatedText) {
+        public void SetEntrySubtitle(int tableEntryIndex, string updatedText) {
             updatedText = updatedText.Replace("\r\n", "\n");
             updatedText = updatedText.Replace("\0", "");
             updatedText += '\0';
@@ -288,7 +288,7 @@ namespace ShadowFNT {
         /// </summary>
         /// <param name="newEntryMessageIdBranchSequence">MessageIdBranchSequence of new entry to determine where to insert in the table</param>
         /// <returns>-1 = did not add, 0 = success</returns>
-        public int InsertNewEntry(int newEntryMessageIdBranchSequence) {
+        public int InsertEntry(int newEntryMessageIdBranchSequence) {
             int successor = -1;
             for (int i = 0; i < entryTable.Count; i++) {
                 if (newEntryMessageIdBranchSequence < entryTable[i].messageIdBranchSequence) {
