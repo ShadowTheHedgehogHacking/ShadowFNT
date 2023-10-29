@@ -5,7 +5,7 @@ namespace ShadowFNTTest
 {
     public class Exporting
     {
-        private const string filterString = "Assets/";
+        private const string filterString = "Assets";
 
         [Fact]
         public void OneToOneExport()

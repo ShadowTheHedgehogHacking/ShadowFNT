@@ -6,18 +6,21 @@ namespace ShadowFNTTest
 {
     public class Modifying
     {
-        private const string filterString = "Assets/";
+        private const string parentDirectory = "Assets\\";
+        private const string filterString = "Assets";
+
 
         [Fact]
         public void ModifyExistingEntries()
         {
-            var fileName = filterString + Assets.Assets.STG0100EN_Original_FileName;
+            var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
             var fnt = FNT.ParseFNTFile(fileName, ref file, filterString);
             Assert.Equal(fileName, fnt.fileName);
             Assert.Equal(filterString, fnt.filterString);
             Assert.Equal(471, fnt.entryTable.Count);
+            Assert.Equal(Assets.Assets.STG0100EN_Original_FileName, fnt.ToString());
 
             int expectedDataIndex = 120;
             Assert.Equal(23478, fnt.GetEntrySubtitleAddress(expectedDataIndex));
@@ -33,7 +36,7 @@ namespace ShadowFNTTest
         [Fact]
         public void AddNewEntry()
         {
-            var fileName = filterString + Assets.Assets.STG0100EN_Original_FileName;
+            var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
             var fnt = FNT.ParseFNTFile(fileName, ref file, filterString);
@@ -47,7 +50,7 @@ namespace ShadowFNTTest
         [Fact]
         public void DeleteEntry()
         {
-            var fileName = filterString + Assets.Assets.STG0100EN_Original_FileName;
+            var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
             var fnt = FNT.ParseFNTFile(fileName, ref file, filterString);

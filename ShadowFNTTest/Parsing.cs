@@ -5,17 +5,18 @@ namespace ShadowFNTTest
 {
     public class Parsing
     {
-        private const string filterString = "Assets/";
+        private const string parentDirectory = "Assets\\";
+        private const string filterString = "Assets";
 
         [Fact]
         public void ReadFNT_Success()
         {
-            var fileName = filterString + Assets.Assets.STG0100EN_Original_FileName;
+            var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
-            var fnt = FNT.ParseFNTFile(fileName, ref file, filterString);
+            var fnt = FNT.ParseFNTFile(fileName, ref file);
             Assert.Equal(fileName, fnt.fileName);
-            Assert.Equal(filterString, fnt.filterString);
+            Assert.Equal("", fnt.filterString);
             Assert.Equal(471, fnt.entryTable.Count);
 
 
@@ -34,7 +35,7 @@ namespace ShadowFNTTest
             // On detect FNT modified by ShadowTH Text Editor < 1.4.2
             
             // FNT modified with < 1.4.2 version
-            var fileNameOldVersion = filterString + Assets.Assets.STG0501EN_With_CorruptedSubtitleAddresses_FileName;
+            var fileNameOldVersion = parentDirectory + Assets.Assets.STG0501EN_With_CorruptedSubtitleAddresses_FileName;
             var fileOldVersion = Assets.Assets.STG0501EN_With_CorruptedSubtitleAddresses();
             Assert.NotNull(fileOldVersion);
             var fntModifiedByOldVersion = FNT.ParseFNTFile(fileNameOldVersion, ref fileOldVersion, filterString);
@@ -42,7 +43,7 @@ namespace ShadowFNTTest
             Assert.Equal(filterString, fntModifiedByOldVersion.filterString);
 
             // FNT modified with > 1.4.2 version (1.4.5)
-            var fileNameNewVersion = filterString + Assets.Assets.STG0501EN_Without_CorruptedSubtitleAddresses_FileName;
+            var fileNameNewVersion = parentDirectory + Assets.Assets.STG0501EN_Without_CorruptedSubtitleAddresses_FileName;
             var fileNewVersion = Assets.Assets.STG0501EN_Without_CorruptedSubtitleAddresses();
             Assert.NotNull(fileNewVersion);
             var fntModifiedByNewVersion = FNT.ParseFNTFile(fileNameNewVersion, ref fileNewVersion, filterString);

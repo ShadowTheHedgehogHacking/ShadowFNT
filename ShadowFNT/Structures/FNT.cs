@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace ShadowFNT.Structures {
@@ -71,7 +72,7 @@ namespace ShadowFNT.Structures {
                     // however the original .fnt files sometimes have junk strings at the end
                     // end at first "\0"
                     subtitleLength = file.Length - fnt.entryTable[i].subtitleAddress;
-                    subtitle = Encoding.Unicode.GetString(file, positionIndex, subtitleLength).Split("\0")[0];
+                    subtitle = Encoding.Unicode.GetString(file, positionIndex, subtitleLength).Split('\0')[0];
                 } else {
                     // otherwise calculate based on next entry in list
                     subtitleLength = fnt.entryTable[i + 1].subtitleAddress - fnt.entryTable[i].subtitleAddress;
@@ -117,8 +118,10 @@ namespace ShadowFNT.Structures {
         }
 
         public override string ToString() {
-            if (filterString != "")
-                return fileName.Split(filterString + '\\')[1];
+            if (filterString != "") {
+                int index = fileName.IndexOf(filterString + "\\");
+                return index >= 0 ? fileName.Substring(index + (filterString + "\\").Length) : fileName;
+            }
             return fileName;
         }
 
