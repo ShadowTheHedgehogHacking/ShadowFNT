@@ -30,6 +30,7 @@ Below are the method names without their signatures.
 GetEntryTable - Backwards compatibility accessor, not recommended to use this method, instead use the below methods.
 
 GetEntryTableCount - Get the total number of entries in a FNT
+GetIndexOfTableEntry - Get the index of a TableEntry
 
 RecomputeAllSubtitleAddresses - Method to automatically compute the subtitle addresses and update all entries. Recommended to call this before exporting back to bytes using ToBytes();
 

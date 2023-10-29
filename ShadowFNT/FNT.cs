@@ -201,6 +201,15 @@ namespace ShadowFNT {
         }
 
         /// <summary>
+        /// Retrieves the index of the specified TableEntry.
+        /// </summary>
+        /// <param name="tableEntry">TableEntry to find the index of.</param>
+        /// <returns>Index of the specified TableEntry.</returns>
+        public int GetIndexOfTableEntry(TableEntry tableEntry) {
+            return entryTable.IndexOf(tableEntry);
+        }
+
+        /// <summary>
         /// Retrieves subtitleAddress at the specified index.
         /// </summary>
         /// <param name="tableEntryIndex">The index of the entry.</param>
