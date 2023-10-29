@@ -20,7 +20,7 @@ namespace ShadowFNT {
     public struct FNT {
         public string fileName;
         public string filterString;
-        public List<TableEntry> entryTable;
+        private List<TableEntry> entryTable;
         private const int ENTRY_SIZE = 20;
 
         public FNT(string fileName, ref byte[] file) {
@@ -29,12 +29,12 @@ namespace ShadowFNT {
         }
 
         /// <summary>
-        /// Parses a .fnt file
+        /// Parses a .FNT file
         /// </summary>
-        /// <param name="fileName">Full name (not SafeName) retrieved via a FilePicker</param>
-        /// <param name="file">Bytes of FNT to parse</param>
-        /// <param name="filterString">String to remove when ToString() is called</param>
-        /// <returns>FNT</returns>
+        /// <param name="fileName">Full name (not SafeName) of the FNT file.</param>
+        /// <param name="file">Bytes of FNT to parse.</param>
+        /// <param name="filterString">String to remove when ToString() is called.</param>
+        /// <returns>FNT instance from the provided data.</returns>
         public static FNT ParseFNTFile(string fileName, ref byte[] file, string filterString = "") {
             FNT fnt = new FNT {
                 fileName = fileName,
@@ -86,9 +86,11 @@ namespace ShadowFNT {
         }
 
         /// <summary>
-        /// Returns a byte[] of the FNT
+        /// Returns a byte[] of the FNT instance.
+        /// It is recommended to first call <see cref="RecomputeAllSubtitleAddresses"/> if lots of changes were made to the FNT instance.
         /// </summary>
-        public byte[] BuildFNTFile() {
+        /// <returns>A byte array containing the serialized FNT.</returns>
+        public byte[] ToBytes() {
             List<byte> fntFile = new List<byte>();
 
             // write header
@@ -116,6 +118,14 @@ namespace ShadowFNT {
             return fntFile.ToArray();
         }
 
+        /// <summary>
+        /// Returns the fileName of the FNT; Removing filterString if it exists.
+        /// </summary>
+        /// <returns>
+        /// If a filterString was specified in the creation of the FNT, this method trims the file name by removing
+        /// the filterString and its leading directory separator from the fileName before returning it.
+        /// If no filterString was specified in creation, the absolute fileName is returned.
+        /// </returns>
         public override string ToString() {
             if (filterString != "") {
                 int index = fileName.IndexOf(filterString + "\\");
@@ -150,33 +160,57 @@ namespace ShadowFNT {
             return true;
         }
 
-        public override int GetHashCode() {
-            return base.GetHashCode();
+        public override int GetHashCode() { return base.GetHashCode(); }
+
+        /// <summary>
+        /// Retrieves total number of entries in the FNT.
+        /// </summary>
+        /// <returns>Number of entries in the entryTable.</returns>
+        public int GetEntryTableCount() { return entryTable.Count; }
+
+        /// <summary>
+        /// Get the entryTable from the FNT.
+        /// Treat this as a Read-Only getter.
+        /// You should avoid using this method unless you absolutely need it.
+        /// Instead use the various getter/setters for modifying the FNT.
+        /// </summary>
+        /// <returns>The full entryTable list from the FNT.</returns>
+        public List<TableEntry> GetEntryTable() {
+            return entryTable;
         }
 
         /// <summary>
-        /// Getter for subtitleAddress of passed in entry index
+        /// Retrieves the full TableEntry struct at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to get from</param>
-        /// <returns>int</returns>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>TableEntry at the specified index.</returns>
+        public TableEntry GetTableEntry(int tableEntryIndex) {
+            return entryTable[tableEntryIndex];
+        }
+
+        /// <summary>
+        /// Retrieves subtitleAddress at the specified index.
+        /// </summary>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>subtitleAddress at the specified index.</returns>
         public int GetEntrySubtitleAddress(int tableEntryIndex) {
             return entryTable[tableEntryIndex].subtitleAddress;
         }
 
         /// <summary>
-        /// Getter for messageIdBranchSequence of passed in entry index
+        /// Retrieves messageIdBranchSequence at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to get from</param>
-        /// <returns>int</returns>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>messageIdBranchSequence at the specified index<./returns>
         public int GetEntryMessageIdBranchSequence(int tableEntryIndex) {
             return entryTable[tableEntryIndex].messageIdBranchSequence;
         }
 
         /// <summary>
-        /// Update a tableEntry's messageIdBranchSequence
+        /// Updates messageIdBranchSequence at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to update</param>
-        /// <param name="messageIdBranchSequence">Updated messageIdBranchSequence value</param>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="messageIdBranchSequence">New messageIdBranchSequence.</param>
         public void SetEntryMessageIdBranchSequence(int tableEntryIndex, int messageIdBranchSequence) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             updatedEntry.messageIdBranchSequence = messageIdBranchSequence;
@@ -184,93 +218,104 @@ namespace ShadowFNT {
         }
 
         /// <summary>
-        /// Getter for EntryType of passed in entry index
+        /// Retrieves EntryType at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to get from</param>
-        /// <returns>EntryType</returns>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>EntryType at the specified index.</returns>
         public EntryType GetEntryEntryType(int tableEntryIndex) {
             return entryTable[tableEntryIndex].entryType;
         }
 
         /// <summary>
-        /// Update a tableEntry's EntryType
+        /// Updates entryType at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to update</param>
-        /// <param name="enumIndex">Updated EntryType value</param>
-        public void SetEntryEntryType(int tableEntryIndex, int enumIndex) {
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="entryTypeValue">New entryType value as an int.</param>
+        public void SetEntryEntryType(int tableEntryIndex, int entryTypeValue) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             EntryType temp = EntryType.BACKGROUND_VOICE; //stub entry to get enum values
-            updatedEntry.entryType = (EntryType)Enum.GetValues(temp.GetType()).GetValue(enumIndex);
+            updatedEntry.entryType = (EntryType)Enum.GetValues(temp.GetType()).GetValue(entryTypeValue);
             entryTable[tableEntryIndex] = updatedEntry;
         }
 
         /// <summary>
-        /// Getter for subtitleActiveTime of passed in subtitleEntry index
+        /// Updates entryType at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to get subtitleActiveTime</param>
-        /// <returns>int</returns>
-        public int GetEntryActiveTime(int tableEntryIndex) {
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="enum">New entryType.</param>
+        public void SetEntryEntryType(int tableEntryIndex, EntryType entryType) {
+            TableEntry updatedEntry = entryTable[tableEntryIndex];
+            updatedEntry.entryType = entryType;
+            entryTable[tableEntryIndex] = updatedEntry;
+        }
+
+        /// <summary>
+        /// Retrieves subtitleActiveTime at the specified index.
+        /// </summary>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>subtitleActiveTime at the specified index.</returns>
+        public int GetEntrySubtitleActiveTime(int tableEntryIndex) {
             return entryTable[tableEntryIndex].subtitleActiveTime;
         }
 
         /// <summary>
-        /// Update a tableEntry's activeTime
+        /// Updates subtitleActiveTime at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to update</param>
-        /// <param name="activeTime">Updated activeTime value</param>
-        public void SetEntryActiveTime(int tableEntryIndex, int activeTime) {
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="subtitleActiveTime">New subtitleActiveTime.</param>
+        public void SetEntrySubtitleActiveTime(int tableEntryIndex, int subtitleActiveTime) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
-            updatedEntry.subtitleActiveTime = activeTime;
+            updatedEntry.subtitleActiveTime = subtitleActiveTime;
             entryTable[tableEntryIndex] = updatedEntry;
         }
 
         /// <summary>
-        /// Getter for AudioID of an entry
+        /// Retrieves audioId at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to get from</param>
-        /// <returns>int</returns>
-        public int GetEntryAudioID(int tableEntryIndex) {
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>audioId at the specified index.</returns>
+        public int GetEntryAudioId(int tableEntryIndex) {
             return entryTable[tableEntryIndex].audioId;
         }
 
         /// <summary>
-        /// Sets the AudioID of an entry
+        /// Updates audioId at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to update</param>
-        /// <param name="audioId">AudioID to play (index in the AFS)</param>
-        public void SetEntryAudioID(int tableEntryIndex, int audioId) {
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="audioId">New audioId.</param>
+        public void SetEntryAudioId(int tableEntryIndex, int audioId) {
             TableEntry updatedEntry = entryTable[tableEntryIndex];
             updatedEntry.audioId = audioId;
             entryTable[tableEntryIndex] = updatedEntry;
         }
 
         /// <summary>
-        /// Get the subtitle string of an entry
+        /// Retrieves subtitle at the specified index.
         /// </summary>
-        /// <param name="tableEntryIndex"></param>
-        /// <returns>String</returns>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <returns>subtitle at the specified index.</returns>
         public string GetEntrySubtitle(int tableEntryIndex) {
             return entryTable[tableEntryIndex].subtitle;
         }
 
         /// <summary>
-        /// Update an entry's subtitle
-        /// Performs a safe expand/shrink of all succeeding entries
+        /// Updates subtitle at the specified index.
+        /// Shifts the subtitleAddress of all succeeding entries.
         /// </summary>
-        /// <param name="tableEntryIndex">Index of entry to update</param>
-        /// <param name="updatedText">string of new text to display</param>
-        public void SetEntrySubtitle(int tableEntryIndex, string updatedText) {
-            updatedText = updatedText.Replace("\r\n", "\n");
-            updatedText = updatedText.Replace("\0", "");
-            updatedText += '\0';
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        /// <param name="subtitle">New subtitle.</param>
+        public void SetEntrySubtitle(int tableEntryIndex, string subtitle) {
+            subtitle = subtitle.Replace("\r\n", "\n");
+            subtitle = subtitle.Replace("\0", "");
+            subtitle += '\0';
             TableEntry entry = entryTable[tableEntryIndex];
             int characterSizeDifference = 0;
 
             if (entry.subtitle != null) {
-                characterSizeDifference = updatedText.Length - entry.subtitle.Length;
+                characterSizeDifference = subtitle.Length - entry.subtitle.Length;
             }
 
-            entry.subtitle = updatedText;
+            entry.subtitle = subtitle;
             entryTable[tableEntryIndex] = entry;
 
             // Update TableEntry of all succeeding elements to account for length change
@@ -284,10 +329,10 @@ namespace ShadowFNT {
         }
 
         /// <summary>
-        /// Create a new entry and add it based on the MessageIdBranchSequence while shifting all successor positions
+        /// Creates a new entry in the entryTable and shifts the subtitleAddress of all succeeding entries.
         /// </summary>
-        /// <param name="newEntryMessageIdBranchSequence">MessageIdBranchSequence of new entry to determine where to insert in the table</param>
-        /// <returns>true if successful</returns>
+        /// <param name="newEntryMessageIdBranchSequence">MessageIdBranchSequence of the new entry. Used to determine where the entry will be inserted in the table.</param>
+        /// <returns>true if successful; false if an error occurs.</returns>
         public bool InsertEntry(int newEntryMessageIdBranchSequence) {
             int successor = -1;
             for (int i = 0; i < entryTable.Count; i++) {
@@ -325,11 +370,15 @@ namespace ShadowFNT {
             return true;
         }
 
-        public void DeleteEntry(int index) {
-            int chardiff = entryTable[index].subtitle.Length * 2; //successor's address - original entry is difference
-            entryTable.RemoveAt(index);
+        /// <summary>
+        /// Deletes an entry and shifts the subtitleAddress of all succeeding entries.
+        /// </summary>
+        /// <param name="tableEntryIndex">The index of the entry.</param>
+        public void DeleteEntry(int tableEntryIndex) {
+            int chardiff = entryTable[tableEntryIndex].subtitle.Length * 2; //successor's address - original entry is difference
+            entryTable.RemoveAt(tableEntryIndex);
             //correct subtitleAddress for all succeeding entries (start at self since successor occupies old location)
-            for (int i = index; i < entryTable.Count; i++) {
+            for (int i = tableEntryIndex; i < entryTable.Count; i++) {
                 TableEntry succeedingEntry = entryTable[i];
                 succeedingEntry.subtitleAddress -= chardiff;
                 entryTable[i] = succeedingEntry;
@@ -345,8 +394,8 @@ namespace ShadowFNT {
 
         /// <summary>
         /// Recomputes subtitleAddress for all entries in the entryTable.
+        /// Recommended to be called before exporting using <see cref="ToBytes"/>.
         /// </summary>
-        /// 
         public void RecomputeAllSubtitleAddresses() {
             // Calculate entry size + header to determine entry 0 without assuming source of truth
             int addressStart = 0;

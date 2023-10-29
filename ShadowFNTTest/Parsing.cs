@@ -15,15 +15,15 @@ namespace ShadowFNTTest {
             var fnt = FNT.ParseFNTFile(fileName, ref file);
             Assert.Equal(fileName, fnt.fileName);
             Assert.Equal("", fnt.filterString);
-            Assert.Equal(471, fnt.entryTable.Count);
+            Assert.Equal(471, fnt.GetEntryTableCount());
 
 
             int expectedDataIndex = 120;
             Assert.Equal(23478, fnt.GetEntrySubtitleAddress(expectedDataIndex));
             Assert.Equal(64100, fnt.GetEntryMessageIdBranchSequence(expectedDataIndex));
             Assert.Equal(EntryType.TRIGGER_OBJECT, fnt.GetEntryEntryType(expectedDataIndex));
-            Assert.Equal(172, fnt.GetEntryActiveTime(expectedDataIndex));
-            Assert.Equal(1564, fnt.GetEntryAudioID(expectedDataIndex));
+            Assert.Equal(172, fnt.GetEntrySubtitleActiveTime(expectedDataIndex));
+            Assert.Equal(1564, fnt.GetEntryAudioId(expectedDataIndex));
             Assert.Equal("This cage is protected by\nthose GUN soldiers.\0", fnt.GetEntrySubtitle(expectedDataIndex));
         }
 
@@ -48,23 +48,23 @@ namespace ShadowFNTTest {
             Assert.Equal(filterString, fntModifiedByNewVersion.filterString);
 
             // Ensure counts match
-            Assert.Equal(fntModifiedByOldVersion.entryTable.Count, fntModifiedByNewVersion.entryTable.Count);
+            Assert.Equal(fntModifiedByOldVersion.GetEntryTableCount(), fntModifiedByNewVersion.GetEntryTableCount());
 
             // Check non-corrupt entries match
             for (int i = 0; i < 390; i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioID(i), fntModifiedByNewVersion.GetEntryAudioID(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryActiveTime(i), fntModifiedByNewVersion.GetEntryActiveTime(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioId(i), fntModifiedByNewVersion.GetEntryAudioId(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleActiveTime(i), fntModifiedByNewVersion.GetEntrySubtitleActiveTime(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryEntryType(i), fntModifiedByNewVersion.GetEntryEntryType(i));
             }
-            for (int i = 392; i < fntModifiedByOldVersion.entryTable.Count; i++) {
+            for (int i = 392; i < fntModifiedByOldVersion.GetEntryTableCount(); i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioID(i), fntModifiedByNewVersion.GetEntryAudioID(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryActiveTime(i), fntModifiedByNewVersion.GetEntryActiveTime(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioId(i), fntModifiedByNewVersion.GetEntryAudioId(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleActiveTime(i), fntModifiedByNewVersion.GetEntrySubtitleActiveTime(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryEntryType(i), fntModifiedByNewVersion.GetEntryEntryType(i));
             }
 
@@ -75,8 +75,8 @@ namespace ShadowFNTTest {
                 // expect everything to match except subtitle address
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioID(i), fntModifiedByNewVersion.GetEntryAudioID(i));
-                Assert.Equal(fntModifiedByOldVersion.GetEntryActiveTime(i), fntModifiedByNewVersion.GetEntryActiveTime(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntryAudioId(i), fntModifiedByNewVersion.GetEntryAudioId(i));
+                Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleActiveTime(i), fntModifiedByNewVersion.GetEntrySubtitleActiveTime(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryEntryType(i), fntModifiedByNewVersion.GetEntryEntryType(i));
 
                 Assert.NotEqual(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
@@ -88,7 +88,7 @@ namespace ShadowFNTTest {
             fntModifiedByOldVersion.RecomputeAllSubtitleAddresses();
 
             // Corruption should be fixed
-            for (int i = 0; i < fntModifiedByOldVersion.entryTable.Count; i++) {
+            for (int i = 0; i < fntModifiedByOldVersion.GetEntryTableCount(); i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
             }
