@@ -1,18 +1,16 @@
-﻿using ShadowFNT.Structures;
+﻿using ShadowFNT;
+using ShadowFNT.Structures;
 using System.Collections.Generic;
 using Xunit;
 
-namespace ShadowFNTTest
-{
-    public class Modifying
-    {
+namespace ShadowFNTTest {
+    public class Modifying {
         private const string parentDirectory = "Assets\\";
         private const string filterString = "Assets";
 
 
         [Fact]
-        public void ModifyExistingEntries()
-        {
+        public void ModifyExistingEntries() {
             var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
@@ -34,8 +32,7 @@ namespace ShadowFNTTest
         }
 
         [Fact]
-        public void AddNewEntry()
-        {
+        public void AddNewEntry() {
             var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
@@ -48,8 +45,7 @@ namespace ShadowFNTTest
         }
 
         [Fact]
-        public void DeleteEntry()
-        {
+        public void DeleteEntry() {
             var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
@@ -99,8 +95,7 @@ namespace ShadowFNTTest
             Assert.NotEqual(nextEntryBeforeDelete.subtitleActiveTime, nextEntryAfterDelete.subtitleActiveTime);
 
             // Check data is deleted
-            for (int i = 0; i < 470; i++)
-            {
+            for (int i = 0; i < 470; i++) {
                 Assert.NotEqual(deletedEntry.subtitleAddress, fnt.GetEntrySubtitleAddress(i));
                 Assert.NotEqual(deletedEntry.subtitle, fnt.GetEntrySubtitle(i));
                 Assert.NotEqual(deletedEntry.messageIdBranchSequence, fnt.GetEntryMessageIdBranchSequence(i));
@@ -109,8 +104,7 @@ namespace ShadowFNTTest
 
             // Compare compute vs delete result
             var copiedTable = new List<TableEntry>();
-            for (int i = 0; i < fnt.entryTable.Count; i++)
-            {
+            for (int i = 0; i < fnt.entryTable.Count; i++) {
                 var entry = fnt.entryTable[i];
                 copiedTable.Add(entry);
             }

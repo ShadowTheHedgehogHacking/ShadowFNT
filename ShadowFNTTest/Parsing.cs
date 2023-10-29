@@ -1,16 +1,14 @@
-﻿using ShadowFNT.Structures;
+﻿using ShadowFNT;
+using ShadowFNT.Structures;
 using Xunit;
 
-namespace ShadowFNTTest
-{
-    public class Parsing
-    {
+namespace ShadowFNTTest {
+    public class Parsing {
         private const string parentDirectory = "Assets\\";
         private const string filterString = "Assets";
 
         [Fact]
-        public void ReadFNT_Success()
-        {
+        public void ReadFNT_Success() {
             var fileName = parentDirectory + Assets.Assets.STG0100EN_Original_FileName;
             var file = Assets.Assets.STG0100EN_Original();
             Assert.NotNull(file);
@@ -30,10 +28,9 @@ namespace ShadowFNTTest
         }
 
         [Fact]
-        public void ReadFNT_WithCorruptedSubtitleAddresses_And_Correct_Them()
-        {
+        public void ReadFNT_WithCorruptedSubtitleAddresses_And_Correct_Them() {
             // On detect FNT modified by ShadowTH Text Editor < 1.4.2
-            
+
             // FNT modified with < 1.4.2 version
             var fileNameOldVersion = parentDirectory + Assets.Assets.STG0501EN_With_CorruptedSubtitleAddresses_FileName;
             var fileOldVersion = Assets.Assets.STG0501EN_With_CorruptedSubtitleAddresses();
@@ -54,8 +51,7 @@ namespace ShadowFNTTest
             Assert.Equal(fntModifiedByOldVersion.entryTable.Count, fntModifiedByNewVersion.entryTable.Count);
 
             // Check non-corrupt entries match
-            for (int i = 0; i<390; i++)
-            {
+            for (int i = 0; i < 390; i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
@@ -63,8 +59,7 @@ namespace ShadowFNTTest
                 Assert.Equal(fntModifiedByOldVersion.GetEntryActiveTime(i), fntModifiedByNewVersion.GetEntryActiveTime(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryEntryType(i), fntModifiedByNewVersion.GetEntryEntryType(i));
             }
-            for (int i = 392; i < fntModifiedByOldVersion.entryTable.Count; i++)
-            {
+            for (int i = 392; i < fntModifiedByOldVersion.entryTable.Count; i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
@@ -76,8 +71,7 @@ namespace ShadowFNTTest
             // entry 389, 390, 391 has corruption on modifying entry 461
             // successive address corruption, so only 390 and 391 will have mismatch
             // Check corrupt entries do not match
-            for (int i = 390; i < 392; i++)
-            {
+            for (int i = 390; i < 392; i++) {
                 // expect everything to match except subtitle address
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntryMessageIdBranchSequence(i), fntModifiedByNewVersion.GetEntryMessageIdBranchSequence(i));
@@ -94,8 +88,7 @@ namespace ShadowFNTTest
             fntModifiedByOldVersion.RecomputeAllSubtitleAddresses();
 
             // Corruption should be fixed
-            for (int i = 0; i < fntModifiedByOldVersion.entryTable.Count; i++)
-            {
+            for (int i = 0; i < fntModifiedByOldVersion.entryTable.Count; i++) {
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitleAddress(i), fntModifiedByNewVersion.GetEntrySubtitleAddress(i));
                 Assert.Equal(fntModifiedByOldVersion.GetEntrySubtitle(i), fntModifiedByNewVersion.GetEntrySubtitle(i));
             }
