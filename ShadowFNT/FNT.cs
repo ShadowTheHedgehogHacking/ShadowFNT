@@ -7,16 +7,15 @@ using System.Text;
 namespace ShadowFNT {
 
     /*
-    .fnt file
+    .FNT file
     Everything is little endian.
 
-    fnt {
+    FNT {
         Header : Number of entries | int
         list of TableEntry
-        list of UTF-16 Strings (Note: for convenience and eq(), sticking Strings inside TableEntry, but will be written per original file)
+        list of UTF-16 Strings
     }
     */
-
     public struct FNT {
         public string fileName;
         public string filterString;
@@ -160,7 +159,20 @@ namespace ShadowFNT {
             return true;
         }
 
-        public override int GetHashCode() { return base.GetHashCode(); }
+        public override int GetHashCode() {
+            unchecked {
+                int hash = 17; // Choose a prime number as the initial hash code
+                for (int i = 0; i < entryTable.Count; i++) {
+                    hash = hash * 23 + entryTable[i].subtitle.GetHashCode();
+                    hash = hash * 23 + entryTable[i].subtitleAddress.GetHashCode();
+                    hash = hash * 23 + entryTable[i].messageIdBranchSequence.GetHashCode();
+                    hash = hash * 23 + entryTable[i].entryType.GetHashCode();
+                    hash = hash * 23 + entryTable[i].subtitleActiveTime.GetHashCode();
+                    hash = hash * 23 + entryTable[i].audioId.GetHashCode();
+                }
+                return hash;
+            }
+        }
 
         /// <summary>
         /// Retrieves total number of entries in the FNT.
