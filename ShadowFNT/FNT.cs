@@ -36,10 +36,10 @@ namespace ShadowFNT {
         /// <param name="filterString">String to remove when ToString() is called</param>
         /// <returns>FNT</returns>
         public static FNT ParseFNTFile(string fileName, ref byte[] file, string filterString = "") {
-            FNT fnt = new FNT();
-
-            fnt.fileName = fileName;
-            fnt.filterString = filterString;
+            FNT fnt = new FNT {
+                fileName = fileName,
+                filterString = filterString
+            };
 
             int numberOfEntries = BitConverter.ToInt32(file, 0);
             int positionIndex = 4; // position of byte to read
@@ -287,8 +287,8 @@ namespace ShadowFNT {
         /// Create a new entry and add it based on the MessageIdBranchSequence while shifting all successor positions
         /// </summary>
         /// <param name="newEntryMessageIdBranchSequence">MessageIdBranchSequence of new entry to determine where to insert in the table</param>
-        /// <returns>-1 = did not add, 0 = success</returns>
-        public int InsertEntry(int newEntryMessageIdBranchSequence) {
+        /// <returns>true if successful</returns>
+        public bool InsertEntry(int newEntryMessageIdBranchSequence) {
             int successor = -1;
             for (int i = 0; i < entryTable.Count; i++) {
                 if (newEntryMessageIdBranchSequence < entryTable[i].messageIdBranchSequence) {
@@ -299,7 +299,7 @@ namespace ShadowFNT {
                 }
             }
             if (successor == -1)
-                return -1;
+                return false;
             TableEntry newEntry = new TableEntry {
                 subtitleAddress = entryTable[successor].subtitleAddress,
                 messageIdBranchSequence = newEntryMessageIdBranchSequence,
@@ -322,7 +322,7 @@ namespace ShadowFNT {
                 entry.subtitleAddress += ENTRY_SIZE;
                 entryTable[i] = entry;
             }
-            return 0;
+            return true;
         }
 
         public void DeleteEntry(int index) {
