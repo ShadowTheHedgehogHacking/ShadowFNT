@@ -3,6 +3,13 @@ C# .NET Standard 2.0 library that can read/write FNT files from Shadow The Hedge
 
 ## Usage
 
+### Add the Library to your Project
+You can find the package on nuget as "ShadowFNT".
+
+Link to package:
+https://www.nuget.org/packages/ShadowFNT/
+
+
 ### Reading and Writing FNT Files
 
 Reads the data from a FNT file, converting it into a format easier to edit for the end user.
